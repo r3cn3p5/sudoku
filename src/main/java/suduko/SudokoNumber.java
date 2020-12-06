@@ -1,12 +1,12 @@
 package suduko;
 
-public class SudukoNumber {
+public class SudokoNumber {
 
 
     private boolean[] numberState = new boolean[9];
 
 
-    public SudukoNumber() {
+    public SudokoNumber() {
 
         for ( int i=0; i<numberState.length; i++)
             numberState[i] = true;

@@ -5,7 +5,7 @@ public class Application {
 
     public static void main(String[] args) {
 
-        Suduko s = new Suduko();
+        Sudoko s = new Sudoko();
 
 
 //        s.setCell(0,2,8);
