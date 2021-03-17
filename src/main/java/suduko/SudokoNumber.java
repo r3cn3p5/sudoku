@@ -80,6 +80,10 @@ public class SudokoNumber {
 
     }
 
+    public boolean isSingle() {
+        return availableCount()==1;
+    }
+
     public String printSingle() {
 
         if (availableCount() == 1)
