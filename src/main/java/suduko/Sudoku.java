@@ -3,7 +3,7 @@ package suduko;
 import java.util.*;
 
 
-public class Sudoko {
+public class Sudoku {
 
     public final static int GRID_SIZE = 9;
 
@@ -14,12 +14,9 @@ public class Sudoko {
 
     SudokoNumber[][] puzzle = new SudokoNumber[9][9];
 
-    public Sudoko() {
+    public Sudoku() {
 
-        for (int x=0; x<GRID_SIZE; x++)
-            for (int y=0; y<GRID_SIZE; y++)
-               puzzle[x][y] = new SudokoNumber();
-
+        reset();
 
         // rows
         for (int y=0; y<GRID_SIZE; y++) {
@@ -57,10 +54,24 @@ public class Sudoko {
 
     }
 
+    public void reset() {
+        for (int x=0; x<GRID_SIZE; x++)
+            for (int y=0; y<GRID_SIZE; y++)
+                puzzle[x][y] = new SudokoNumber();
+
+    }
+
+    public boolean isComplete() {
+        for (int x=0; x<GRID_SIZE; x++)
+            for (int y=0; y<GRID_SIZE; y++)
+                 if (!puzzle[x][y].isSingle())
+                     return false;
+
+        return true;
+    }
+
     public void setCell(int x, int y, int number) {
-
         puzzle[x][y].removeAllExcept(number);
-
     }
 
 
