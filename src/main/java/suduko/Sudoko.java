@@ -79,18 +79,14 @@ public class Sudoko {
 
             changed |= segPaths.stream().map(path -> processPathOnlyOnePossiblePosition(path)).reduce(changed, Boolean::logicalOr);
 
-            // for a segment are there lines
-
-            // col 1
-            // - is there a line of numbers
-            // - yes - does it exist on the other cols
-            // - no - we have a candidate
-
+            changed |= processRowOrColumnOnly();
 
         }
 
         return changed;
     }
+
+
 
     private boolean processPathReduce(List<IntPair> path) {
 
@@ -141,62 +137,61 @@ public class Sudoko {
 
     }
 
-    private boolean processPathSegment() {
+    private boolean processRowOrColumnOnly() {
 
-        for (int cx=0; cx<GRID_SIZE; cx+=3) {
-            for (int cy=0; cy<GRID_SIZE; cy+=3) {
+        boolean changed = false;
+        for (int n=1; n<=9; n++) {
 
+            for (int xs=0; xs < 3; xs++) {
+                for (int ys=0; ys < 3; ys++) {
 
-                for (int y=0; y <3; y++) {
-                    int[] numbersAvailablePos1 = puzzle[cx][cy+y].getNumbersAvailable();
-                    int[] numbersAvailablePos2 = puzzle[cx+1][cy+y].getNumbersAvailable();
-                    int[] numbersAvailablePos3 = puzzle[cx+2][cy+y].getNumbersAvailable();
+                    for (int r = 0; r < 3; r++) {
 
-                    Set<Integer> dups = new HashSet();
-                    for (int p1: numbersAvailablePos1) {
-                        for (int p2: numbersAvailablePos2) {
-                            for (int p3: numbersAvailablePos3) {
-                                if (p1 == p2 || p1 == p3 )
-                                    dups.add(new Integer(p1));
-                                if (p2 == p1 || p2 == p3 )
-                                    dups.add(new Integer(p2));
-                                if (p3 == p1 || p3 == p2  )
-                                    dups.add(new Integer(p3));
+                        if (existsOnRow(xs,ys,r,n)) {
+
+                            boolean candidate = true;
+                            for (int ri = 0; ri < 3; ri++) {
+                                if (ri != r && existsOnRow(xs,ys,ri,n))
+                                    candidate = false;
+                            }
+
+                            if (candidate) {
+                                //
+                                for (int xsi=0; xsi <3; xsi++) {
+                                    if (xs != xsi) {
+                                        changed |= removeNumberOnRow(xsi,ys,r,n);
+                                    }
+                                }
                             }
                         }
                     }
 
-                    
+                    for (int c = 0; c < 3; c++) {
 
-                }
+                        if (existsOnRow(xs,ys,c,n)) {
 
-                for (int x=0; x <3; x++) {
-                    int[] numbersAvailablePos1 = puzzle[cx+x][cy].getNumbersAvailable();
-                    int[] numbersAvailablePos2 = puzzle[cx+x][cy+1].getNumbersAvailable();
-                    int[] numbersAvailablePos3 = puzzle[cx+x][cy+2].getNumbersAvailable();
+                            boolean candidate = true;
+                            for (int ci = 0; ci < 3; ci++) {
+                                if (ci != c && existsOnColumn(xs,ys,ci,n))
+                                    candidate = false;
+                            }
 
-                    Set<Integer> dups = new HashSet();
-                    for (int p1: numbersAvailablePos1) {
-                        for (int p2: numbersAvailablePos2) {
-                            for (int p3: numbersAvailablePos3) {
-                                if (p1 == p2 || p1 == p3 )
-                                    dups.add(new Integer(p1));
-                                if (p2 == p1 || p2 == p3 )
-                                    dups.add(new Integer(p2));
-                                if (p3 == p1 || p3 == p2  )
-                                    dups.add(new Integer(p3));
+                            if (candidate) {
+                                //
+                                for (int ysi=0; ysi <3; ysi++) {
+                                    if (ys != ysi) {
+                                        changed |= removeNumberOnColumn(xs,ysi,c,n);
+                                    }
+                                }
                             }
                         }
                     }
-
-
 
                 }
             }
         }
 
-
-        return false;
+        return changed;
     }
 
 
@@ -204,6 +199,40 @@ public class Sudoko {
         return (int) path.stream().filter( pair -> {
             return puzzle[pair.x][pair.y].isAvailable(number);
         }).count();
+    }
+
+    private boolean existsOnRow(int segx, int segy, int row, int number ) {
+        for (int c = 0; c < 3; c++) {
+            if (puzzle[(segx * 3) + c][(segy * 3) + row].isAvailable(number))
+                return true;
+        }
+
+        return false;
+    }
+
+    private boolean removeNumberOnRow(int segx, int segy, int row, int number ) {
+        boolean changed = false;
+        for (int c = 0; c < 3; c++) {
+            changed |= puzzle[(segx * 3) + c][(segy * 3) + row].remove(number);
+        }
+        return changed;
+    }
+
+    private boolean existsOnColumn(int segx, int segy, int column, int number ) {
+        for (int r = 0; r < 3; r++) {
+            if (puzzle[(segx * 3) + column][(segy * 3) + r].isAvailable(number))
+                return true;
+        }
+
+        return false;
+    }
+
+    private boolean removeNumberOnColumn(int segx, int segy, int column, int number ) {
+        boolean changed = false;
+        for (int r = 0; r < 3; r++) {
+            changed |= puzzle[(segx * 3) + column][(segy * 3) + r].remove(number);
+        }
+        return changed;
     }
 
     public void printGrid() {
