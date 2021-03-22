@@ -12,6 +12,9 @@ public class Application {
 
         Sudoku s = new Sudoku();
 
+
+        int puzzle[][] = new int[9][9];
+
         // Open stream
         Class clazz = Application.class;
         InputStream inputStream = clazz.getResourceAsStream("/p096_sudoku.txt");
@@ -23,21 +26,20 @@ public class Application {
                 if (line.startsWith("Grid")) {
                     System.out.println(line);
                     lineNumber = 0;
-                    s.reset();
                     continue;
                 }
 
                 for (int c=0; c<9; c++) {
                     int number = Integer.valueOf(line.substring(c,c+1));
                     if (number!=0)
-                        s.setCell(c,lineNumber,number);
+                        puzzle[c][lineNumber] = number;
                 }
 
                 lineNumber++;
 
                 if (lineNumber == 9) {
                     s.process();
-                    if (!s.isComplete())
+                    if (!s)
                         s.printGrid();
                     System.out.println("Is this complete " + s.isComplete());
 
