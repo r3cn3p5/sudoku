@@ -1,8 +1,5 @@
 package suduko;
 
-import java.util.*;
-
-
 public class Sudoku {
 
     private int[][] puzzle;
@@ -19,36 +16,36 @@ public class Sudoku {
         return puzzle;
     }
 
-    private boolean solve(int[][] lastPuzzle, int cx, int cy) {
+    private boolean solve(int[][] nextPuzzle, int column, int row) {
 
         // not valid return false
-        if (isError(lastPuzzle))
+        if (isError(nextPuzzle))
             return false;
 
-        if (cx>=9) {
-            cx = 0;
-            cy++;
+        if (column>=9) {
+            column = 0;
+            row++;
 
-            if (cy >= 9) {
-                clonePuzzle(lastPuzzle,this.puzzle);
+            if (row >= 9) {
+                clonePuzzle(nextPuzzle,this.puzzle);
                 return true;
             }
         }
 
         // Clone
         int localPuzzle[][] = new int[9][9];
-        clonePuzzle(lastPuzzle,localPuzzle);
+        clonePuzzle(nextPuzzle,localPuzzle);
 
-        if (localPuzzle[cy][cx] != 0) {
-            return solve(localPuzzle, cx+1, cy);
+        if (localPuzzle[row][column] != 0) {
+            return solve(localPuzzle, column+1, row);
         } else {
             for (int n = 1; n <= 9; n++) {
 
                 // set next number
-                localPuzzle[cy][cx] = n;
+                localPuzzle[row][column] = n;
 
                 // move next location
-                if (solve(localPuzzle, cx+1, cy))
+                if (solve(localPuzzle, column+1, row))
                     return true;
             }
             return false;
