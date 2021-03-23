@@ -10,9 +10,6 @@ public class Application {
 
     public static void main(String[] args) {
 
-        Sudoku s = new Sudoku();
-
-
         int puzzle[][] = new int[9][9];
 
         // Open stream
@@ -36,8 +33,11 @@ public class Application {
                 lineNumber++;
 
                 if (lineNumber == 9) {
-                    if (s.solve(puzzle,0,0))
-                           System.out.println("Complete ");
+                    Sudoku s = new Sudoku(puzzle);
+
+                    if (s.solve()) {
+                        s.printGrid();
+                    }
 
                 }
             }
